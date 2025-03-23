@@ -3,7 +3,7 @@
     "wake_word": "eh maanoo",
     "author": "Devlp",
     "website": "https://42.42",
-    "model":   "https://github.com/Devloupio/models/raw/main/eh_maanoo2.tflite",
+    "model":   "https://github.com/Devloupio/models/raw/main/eh_maanoo.tflite",
     "trained_languages": ["en"],
     "version": 2,
     "micro": {
