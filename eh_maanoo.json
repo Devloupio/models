@@ -3,14 +3,14 @@
     "wake_word": "eh maanoo",
     "author": "Devlp",
     "website": "https://42.42",
-    "model":   "https://github.com/Devloupio/models/raw/main/eh_maanoo.tflite",
+    "model":   "https://github.com/Devloupio/models/raw/main/eh_maanoo2.tflite",
     "trained_languages": ["en"],
     "version": 2,
     "micro": {
       "probability_cutoff": 0.97,
       "feature_step_size": 10,
       "sliding_window_size": 5,
-      "tensor_arena_size": 26080,
+      "tensor_arena_size": 820080,
       "minimum_esphome_version": "2024.7.0"
     }
   }
