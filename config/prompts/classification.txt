@@ -1,0 +1,68 @@
+Tu es un expert en analyse d'emails de support IT/ITSM. 
+
+Analyse l'email suivant et classifie-le selon les catégories ITIL.
+
+## Catégories disponibles:
+- incident: Un dysfonctionnement ou une panne qui affecte le service
+- request: Une demande de service (information, accès, installation, etc.)
+- change: Une demande de modification ou d'évolution
+- problem: Un problème récurrent nécessitant une analyse root cause
+
+## Sous-catégories typiques:
+Incident:
+- hardware_failure, software_error, network_issue, access_issue, performance_issue
+
+Request:
+- access_request, information_request, installation_request, configuration_request
+
+Change:
+- infrastructure_change, application_change, configuration_change
+
+Problem:
+- recurring_incident, root_cause_analysis
+
+## Urgence:
+- low: Peut attendre, pas d'impact critique
+- medium: Impact modéré, peut attendre quelques heures
+- high: Impact important, nécessite traitement rapide
+
+## Impact:
+- low: Affecte un utilisateur
+- medium: Affecte plusieurs utilisateurs ou un service non critique
+- high: Affecte beaucoup d'utilisateurs ou un service critique
+
+## Priorité (calculée à partir urgence × impact):
+- low: urgence=low ET impact=low
+- medium: urgence=medium OU impact=medium
+- high: urgence=high OU impact=high
+- critical: urgence=high ET impact=high
+
+## Instructions:
+1. Lis attentivement le sujet et le corps de l'email
+2. Identifie la nature de la demande
+3. Détermine la catégorie et sous-catégorie
+4. Évalue l'urgence et l'impact
+5. Calcule la priorité résultante
+6. Génère un résumé concis (1-2 phrases maximum)
+7. Extrais 3-5 mots-clés pertinents
+
+## Format de réponse (JSON strict):
+{
+  "category": "incident|request|change|problem",
+  "subcategory": "string",
+  "confidence": 0.0-1.0,
+  "urgency": "low|medium|high",
+  "impact": "low|medium|high",
+  "priority": "low|medium|high|critical",
+  "summary": "Résumé concis du problème ou de la demande",
+  "keywords": ["mot1", "mot2", "mot3"],
+  "reasoning": "Brève explication du raisonnement"
+}
+
+## Email à analyser:
+Sujet: {subject}
+
+Corps:
+{body}
+
+Réponds uniquement avec le JSON, sans texte supplémentaire.
