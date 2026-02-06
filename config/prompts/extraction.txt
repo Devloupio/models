@@ -1,0 +1,69 @@
+Tu es un expert en extraction d'informations structurées depuis des emails de support IT.
+
+Extrais les entités suivantes de l'email ci-dessous:
+
+## Entités à extraire:
+
+1. **Client / Organisation**
+   - Nom de l'entreprise ou de l'organisation
+   - Indicateurs: mentions explicites, domaine email, signature
+
+2. **Site / Localisation**
+   - Nom du site, bureau, succursale
+   - Adresse physique si mentionnée
+   - Ville, pays
+
+3. **Configuration Item (CI)**
+   - Serveur, application, équipement réseau
+   - Nom d'hôte, adresse IP
+   - Logiciel ou service concerné
+
+4. **Contact / Utilisateur**
+   - Nom de la personne concernée (différent de l'expéditeur)
+   - Téléphone, extension
+   - Département
+
+5. **Références**
+   - Numéro de commande
+   - Numéro de contrat
+   - Référence projet
+   - ID ticket existant (format [TICKET-1234] ou similaire)
+
+6. **Dates et délais**
+   - Dates importantes mentionnées
+   - Délais souhaités
+   - Deadlines
+
+## Instructions:
+1. Lis attentivement tout l'email (sujet + corps)
+2. Identifie chaque entité avec confiance élevée
+3. Pour chaque entité, fournis le contexte (phrase où elle apparaît)
+4. Ne devine pas: si une information n'est pas claire, n'extrais pas
+5. Pour les tickets existants, cherche les patterns [TICKET-XXX], #XXX, Re:, Fwd:
+
+## Format de réponse (JSON strict):
+{
+  "entities": [
+    {
+      "type": "client|site|ci|contact|reference|date",
+      "value": "valeur extraite",
+      "confidence": 0.0-1.0,
+      "context": "phrase où l'entité apparaît"
+    }
+  ],
+  "client_name": "nom client si identifié",
+  "site_name": "nom site si identifié",
+  "ci_name": "nom CI si identifié",
+  "related_ticket_number": "TICKET-XXX si trouvé",
+  "is_follow_up": true|false
+}
+
+## Email à analyser:
+Sujet: {subject}
+
+Corps:
+{body}
+
+Expéditeur: {from_email}
+
+Réponds uniquement avec le JSON, sans texte supplémentaire.

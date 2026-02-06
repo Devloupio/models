@@ -1,0 +1,509 @@
+{
+  "database_schema": {
+    "name": "Mail2Tickets Database Schema",
+    "version": "1.0.0",
+    "description": "Schéma de base de données pour le système de ticketing Mail2Tickets",
+    "tables": [
+      {
+        "name": "tickets",
+        "description": "Table principale des tickets",
+        "columns": [
+          {
+            "name": "id",
+            "type": "INTEGER",
+            "primary_key": true,
+            "auto_increment": true,
+            "nullable": false
+          },
+          {
+            "name": "ticket_number",
+            "type": "VARCHAR(50)",
+            "unique": true,
+            "nullable": false,
+            "description": "Numéro public du ticket (ex: TICKET-1234)"
+          },
+          {
+            "name": "status",
+            "type": "VARCHAR(20)",
+            "nullable": false,
+            "default": "new",
+            "enum": ["new", "assigned", "in_progress", "resolved", "closed", "reopened"]
+          },
+          {
+            "name": "priority",
+            "type": "VARCHAR(20)",
+            "nullable": false,
+            "default": "medium",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          {
+            "name": "category",
+            "type": "VARCHAR(50)",
+            "nullable": true
+          },
+          {
+            "name": "subcategory",
+            "type": "VARCHAR(50)",
+            "nullable": true
+          },
+          {
+            "name": "subject",
+            "type": "TEXT",
+            "nullable": false
+          },
+          {
+            "name": "description",
+            "type": "TEXT",
+            "nullable": false
+          },
+          {
+            "name": "requester_email",
+            "type": "VARCHAR(255)",
+            "nullable": false,
+            "index": true
+          },
+          {
+            "name": "requester_name",
+            "type": "VARCHAR(255)",
+            "nullable": true
+          },
+          {
+            "name": "assigned_to",
+            "type": "VARCHAR(255)",
+            "nullable": true
+          },
+          {
+            "name": "client_id",
+            "type": "INTEGER",
+            "nullable": true,
+            "foreign_key": "clients.id"
+          },
+          {
+            "name": "site_id",
+            "type": "INTEGER",
+            "nullable": true,
+            "foreign_key": "sites.id"
+          },
+          {
+            "name": "ci_id",
+            "type": "INTEGER",
+            "nullable": true,
+            "foreign_key": "configuration_items.id"
+          },
+          {
+            "name": "urgency",
+            "type": "VARCHAR(20)",
+            "nullable": false,
+            "default": "medium",
+            "enum": ["low", "medium", "high"]
+          },
+          {
+            "name": "impact",
+            "type": "VARCHAR(20)",
+            "nullable": false,
+            "default": "medium",
+            "enum": ["low", "medium", "high"]
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP"
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP"
+          },
+          {
+            "name": "resolved_at",
+            "type": "TIMESTAMP",
+            "nullable": true
+          },
+          {
+            "name": "closed_at",
+            "type": "TIMESTAMP",
+            "nullable": true
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_ticket_number",
+            "columns": ["ticket_number"],
+            "unique": true
+          },
+          {
+            "name": "idx_status",
+            "columns": ["status"]
+          },
+          {
+            "name": "idx_priority",
+            "columns": ["priority"]
+          },
+          {
+            "name": "idx_requester_email",
+            "columns": ["requester_email"]
+          },
+          {
+            "name": "idx_created_at",
+            "columns": ["created_at"]
+          }
+        ]
+      },
+      {
+        "name": "ticket_comments",
+        "description": "Commentaires sur les tickets",
+        "columns": [
+          {
+            "name": "id",
+            "type": "INTEGER",
+            "primary_key": true,
+            "auto_increment": true,
+            "nullable": false
+          },
+          {
+            "name": "ticket_id",
+            "type": "INTEGER",
+            "nullable": false,
+            "foreign_key": "tickets.id"
+          },
+          {
+            "name": "comment_text",
+            "type": "TEXT",
+            "nullable": false
+          },
+          {
+            "name": "author_email",
+            "type": "VARCHAR(255)",
+            "nullable": false
+          },
+          {
+            "name": "author_name",
+            "type": "VARCHAR(255)",
+            "nullable": true
+          },
+          {
+            "name": "is_internal",
+            "type": "BOOLEAN",
+            "nullable": false,
+            "default": false
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP"
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_ticket_id",
+            "columns": ["ticket_id"]
+          },
+          {
+            "name": "idx_created_at",
+            "columns": ["created_at"]
+          }
+        ]
+      },
+      {
+        "name": "email_threads",
+        "description": "Threads d'emails liés aux tickets",
+        "columns": [
+          {
+            "name": "id",
+            "type": "INTEGER",
+            "primary_key": true,
+            "auto_increment": true,
+            "nullable": false
+          },
+          {
+            "name": "ticket_id",
+            "type": "INTEGER",
+            "nullable": true,
+            "foreign_key": "tickets.id"
+          },
+          {
+            "name": "message_id",
+            "type": "VARCHAR(255)",
+            "unique": true,
+            "nullable": false
+          },
+          {
+            "name": "in_reply_to",
+            "type": "VARCHAR(255)",
+            "nullable": true
+          },
+          {
+            "name": "references",
+            "type": "TEXT",
+            "nullable": true,
+            "description": "JSON array of message IDs"
+          },
+          {
+            "name": "thread_id",
+            "type": "VARCHAR(255)",
+            "nullable": false,
+            "index": true
+          },
+          {
+            "name": "subject",
+            "type": "TEXT",
+            "nullable": false
+          },
+          {
+            "name": "from_email",
+            "type": "VARCHAR(255)",
+            "nullable": false
+          },
+          {
+            "name": "to_emails",
+            "type": "TEXT",
+            "nullable": false,
+            "description": "JSON array of email addresses"
+          },
+          {
+            "name": "cc_emails",
+            "type": "TEXT",
+            "nullable": true,
+            "description": "JSON array of email addresses"
+          },
+          {
+            "name": "received_at",
+            "type": "TIMESTAMP",
+            "nullable": false
+          },
+          {
+            "name": "processed_at",
+            "type": "TIMESTAMP",
+            "nullable": true
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_message_id",
+            "columns": ["message_id"],
+            "unique": true
+          },
+          {
+            "name": "idx_thread_id",
+            "columns": ["thread_id"]
+          },
+          {
+            "name": "idx_ticket_id",
+            "columns": ["ticket_id"]
+          }
+        ]
+      },
+      {
+        "name": "clients",
+        "description": "Clients / Organisations",
+        "columns": [
+          {
+            "name": "id",
+            "type": "INTEGER",
+            "primary_key": true,
+            "auto_increment": true,
+            "nullable": false
+          },
+          {
+            "name": "name",
+            "type": "VARCHAR(255)",
+            "nullable": false,
+            "unique": true
+          },
+          {
+            "name": "email_domain",
+            "type": "VARCHAR(255)",
+            "nullable": true
+          },
+          {
+            "name": "contact_email",
+            "type": "VARCHAR(255)",
+            "nullable": true
+          },
+          {
+            "name": "phone",
+            "type": "VARCHAR(50)",
+            "nullable": true
+          },
+          {
+            "name": "sla_level",
+            "type": "VARCHAR(20)",
+            "nullable": false,
+            "default": "bronze",
+            "enum": ["bronze", "silver", "gold", "platinum"]
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP"
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_name",
+            "columns": ["name"],
+            "unique": true
+          },
+          {
+            "name": "idx_email_domain",
+            "columns": ["email_domain"]
+          }
+        ]
+      },
+      {
+        "name": "sites",
+        "description": "Sites / Localisations",
+        "columns": [
+          {
+            "name": "id",
+            "type": "INTEGER",
+            "primary_key": true,
+            "auto_increment": true,
+            "nullable": false
+          },
+          {
+            "name": "client_id",
+            "type": "INTEGER",
+            "nullable": false,
+            "foreign_key": "clients.id"
+          },
+          {
+            "name": "name",
+            "type": "VARCHAR(255)",
+            "nullable": false
+          },
+          {
+            "name": "address",
+            "type": "TEXT",
+            "nullable": true
+          },
+          {
+            "name": "city",
+            "type": "VARCHAR(100)",
+            "nullable": true
+          },
+          {
+            "name": "country",
+            "type": "VARCHAR(100)",
+            "nullable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP"
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_client_id",
+            "columns": ["client_id"]
+          }
+        ]
+      },
+      {
+        "name": "configuration_items",
+        "description": "Configuration Items (CI)",
+        "columns": [
+          {
+            "name": "id",
+            "type": "INTEGER",
+            "primary_key": true,
+            "auto_increment": true,
+            "nullable": false
+          },
+          {
+            "name": "name",
+            "type": "VARCHAR(255)",
+            "nullable": false
+          },
+          {
+            "name": "type",
+            "type": "VARCHAR(100)",
+            "nullable": false,
+            "description": "server, application, network, database, etc."
+          },
+          {
+            "name": "site_id",
+            "type": "INTEGER",
+            "nullable": true,
+            "foreign_key": "sites.id"
+          },
+          {
+            "name": "status",
+            "type": "VARCHAR(20)",
+            "nullable": false,
+            "default": "active",
+            "enum": ["active", "inactive", "maintenance", "retired"]
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP"
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_name",
+            "columns": ["name"]
+          },
+          {
+            "name": "idx_type",
+            "columns": ["type"]
+          },
+          {
+            "name": "idx_site_id",
+            "columns": ["site_id"]
+          }
+        ]
+      },
+      {
+        "name": "categories",
+        "description": "Catégories hiérarchiques",
+        "columns": [
+          {
+            "name": "id",
+            "type": "INTEGER",
+            "primary_key": true,
+            "auto_increment": true,
+            "nullable": false
+          },
+          {
+            "name": "name",
+            "type": "VARCHAR(255)",
+            "nullable": false
+          },
+          {
+            "name": "parent_id",
+            "type": "INTEGER",
+            "nullable": true,
+            "foreign_key": "categories.id",
+            "description": "NULL pour catégorie racine"
+          },
+          {
+            "name": "description",
+            "type": "TEXT",
+            "nullable": true
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP"
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_parent_id",
+            "columns": ["parent_id"]
+          }
+        ]
+      }
+    ]
+  }
+}
